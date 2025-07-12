@@ -30,25 +30,25 @@ echo "Setting up repository..."
 gh repo clone "${GITHUB_REPOSITORY}" repo || error "Failed to clone the repository."
 cd repo
 
-# Check if the branch is 'master'
+# Check if the branch is 'main'
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-if [ "$current_branch" != "master" ]; then
-  error "Current branch is not 'master'. This action only works on the 'master' branch."
+if [ "$current_branch" != "main" ]; then
+  error "Current branch is not 'main'. This action only works on the 'main' branch."
 fi
 
 # Create a backup branch with a timestamp
 timestamp=$(date +"%Y%m%d-%H%M%S")
 backup_branch="backup-${timestamp}"
-git checkout master
+git checkout main
 git checkout -b "${backup_branch}" || error "Failed to create a backup branch."
 #dont know why but you need to set the url with a token and repo name.
 git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
 git push origin "${backup_branch}" || error "Failed to push the backup branch."
 
-# Rollback master to the previous commit and force push
-git checkout master
-git reset --hard HEAD~1 || error "Failed to reset the 'master' branch."
-git push --force origin master || error "Failed to force push the 'master' branch."
+# Rollback main to the previous commit and force push
+git checkout main
+git reset --hard HEAD~1 || error "Failed to reset the 'main' branch."
+git push --force origin main || error "Failed to force push the 'main' branch."
 
 # Clean up
 cleanup
